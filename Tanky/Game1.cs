@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using VelcroPhysics.Dynamics;
 
 namespace Tanky
 {
@@ -9,12 +10,14 @@ namespace Tanky
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
         private Tanky tanky;
+        private World world = new World(Vector2.UnitY);
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
+            
         }
 
         protected override void Initialize()
