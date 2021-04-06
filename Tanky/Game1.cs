@@ -30,7 +30,7 @@ namespace Tanky
 
             // TODO: use this.Content to load your game content here
 
-            tanky = new Tanky(Content.Load<Texture2D>("tanky"));
+            tanky = new Tanky(Content.Load<Texture2D>("Tanky"));
         }
 
         protected override void Update(GameTime gameTime)
