@@ -8,9 +8,9 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-[assembly: global::Android.Runtime.ResourceDesignerAttribute("Project1.Resource", IsApplication=true)]
+[assembly: global::Android.Runtime.ResourceDesignerAttribute("Tanky.Android.Resource", IsApplication=true)]
 
-namespace Project1
+namespace Tanky.Android
 {
 	
 	
