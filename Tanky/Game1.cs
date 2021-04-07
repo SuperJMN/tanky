@@ -19,6 +19,8 @@ namespace Tanky
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
+            graphics.IsFullScreen = true;
+            
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
         }
@@ -42,7 +44,7 @@ namespace Tanky
             var width = ConvertUnits.ToSimUnits(512f);
             var height = ConvertUnits.ToSimUnits(64f);
             
-            tanky = new Tanky(Content.Load<Texture2D>("Tanky"), world);
+            tanky = new Tanky(Content.Load<Texture2D>("TankyBody"), Content.Load<Texture2D>("TankyCannon"), world);
 
             platform = new Platform(Content.Load<Texture2D>("GroundSprite"), world, groundPosition, width, height);
         }
@@ -64,19 +66,29 @@ namespace Tanky
         {
             var keyboardState = Keyboard.GetState();
 
-            if (keyboardState.IsKeyDown(Keys.Up))
+            if (keyboardState.IsKeyDown(Keys.A))
             {
-                tanky.Jump();
+                tanky.GoBack();
             }
 
-            if (keyboardState.IsKeyDown(Keys.Right))
+            if (keyboardState.IsKeyDown(Keys.Up))
+            {
+                tanky.RiseCannon();
+            }
+
+            if (keyboardState.IsKeyDown(Keys.Down))
+            {
+                tanky.LowerCannon();
+            }
+
+            if (keyboardState.IsKeyDown(Keys.D))
             {
                 tanky.GoForward();
             }
 
-            if (keyboardState.IsKeyDown(Keys.Left))
+            if (keyboardState.IsKeyDown(Keys.Space))
             {
-                tanky.GoBack();
+                tanky.Jump();
             }
         }
 
@@ -89,6 +101,16 @@ namespace Tanky
                 if (padState.IsButtonDown(Buttons.A))
                 {
                     tanky.Jump();
+                }
+
+                if (padState.IsButtonDown(Buttons.X))
+                {
+                    tanky.RiseCannon();
+                }
+
+                if (padState.IsButtonDown(Buttons.Y))
+                {
+                    tanky.LowerCannon();
                 }
 
                 if (padState.IsButtonDown(Buttons.DPadRight))
@@ -108,7 +130,7 @@ namespace Tanky
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             spriteBatch.Begin();
-            spriteBatch.Draw(tanky.Sprite, ConvertUnits.ToDisplayUnits(tanky.Position), null, Color.White, 0, tanky.Origin, 1f, SpriteEffects.None, 0f);
+            tanky.Draw(spriteBatch);
             spriteBatch.Draw(platform.Sprite, ConvertUnits.ToDisplayUnits(platform.Position), null, Color.White, 0f, platform.Origin, 1f, SpriteEffects.None, 0f);
             spriteBatch.End();
 
