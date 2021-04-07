@@ -9,24 +9,18 @@ namespace Tanky
 {
     public class Game1 : Game
     {
-        private GraphicsDeviceManager graphics;
+        private readonly GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
         private Tanky tanky;
-        private World world = new World(new Vector2(0, 9.82f));
-        private Body tankyBody;
+        private readonly World world = new World(new Vector2(0, 9.82f));
         private Vector2 _cameraPosition;
-        private Body groundBody;
-        private Texture2D groundSprite;
-        private Vector2 groundOrigin;
-        private Vector2 tankyOrigin;
+        private Platform platform;
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
-           
-
         }
 
         protected override void Initialize()
@@ -42,19 +36,15 @@ namespace Tanky
 
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            tankyBody = BodyFactory.CreateRectangle(world, 0.5f, 0.5f, 1, new Vector2(4, 0), bodyType: BodyType.Dynamic);
             var screenCenter = new Vector2(graphics.GraphicsDevice.Viewport.Width / 2f, graphics.GraphicsDevice.Viewport.Height / 2f);
             Vector2 groundPosition = ConvertUnits.ToSimUnits(screenCenter) + new Vector2(0, 1.25f);
 
-            groundBody = BodyFactory.CreateRectangle(world, ConvertUnits.ToSimUnits(512f), ConvertUnits.ToSimUnits(64f), 1f, groundPosition);
-            groundBody.BodyType = BodyType.Static;
-            groundBody.Restitution = 0.3f;
-            groundBody.Friction = 0.5f;
+            var width = ConvertUnits.ToSimUnits(512f);
+            var height = ConvertUnits.ToSimUnits(64f);
+            
+            tanky = new Tanky(Content.Load<Texture2D>("Tanky"), world);
 
-            tanky = new Tanky(Content.Load<Texture2D>("Tanky"));
-            groundSprite = Content.Load<Texture2D>("GroundSprite"); // 512px x 64px =>   8m x 1m
-            groundOrigin = new Vector2(groundSprite.Width / 2f, groundSprite.Height / 2f);
-            tankyOrigin = new Vector2(tanky.Texture.Width / 2f, tanky.Texture.Height / 2f);
+            platform = new Platform(Content.Load<Texture2D>("GroundSprite"), world, groundPosition, width, height);
         }
 
         protected override void Update(GameTime gameTime)
@@ -65,7 +55,6 @@ namespace Tanky
             HandleKeypad();
             HandleKeyboard();
            
-
             world.Step((float)gameTime.ElapsedGameTime.TotalMilliseconds * 0.001F);
 
             base.Update(gameTime);
@@ -77,18 +66,17 @@ namespace Tanky
 
             if (keyboardState.IsKeyDown(Keys.Up))
             {
-                tankyBody.ApplyLinearImpulse(new Vector2(0, -0.2f));
-            }
-
-            var horzSpeed = 0.03f;
-            if (keyboardState.IsKeyDown(Keys.Left))
-            {
-                tankyBody.ApplyLinearImpulse(new Vector2(-horzSpeed, 0));
+                tanky.Jump();
             }
 
             if (keyboardState.IsKeyDown(Keys.Right))
             {
-                tankyBody.ApplyLinearImpulse(new Vector2(horzSpeed, 0));
+                tanky.GoForward();
+            }
+
+            if (keyboardState.IsKeyDown(Keys.Left))
+            {
+                tanky.GoBack();
             }
         }
 
@@ -100,18 +88,17 @@ namespace Tanky
             {
                 if (padState.IsButtonDown(Buttons.A))
                 {
-                    tankyBody.ApplyLinearImpulse(new Vector2(0, -0.2f));
+                    tanky.Jump();
                 }
 
-                var horzSpeed = 0.03f;
                 if (padState.IsButtonDown(Buttons.DPadRight))
                 {
-                    tankyBody.ApplyLinearImpulse(new Vector2(horzSpeed, 0));
+                    tanky.GoForward();
                 }
 
                 if (padState.IsButtonDown(Buttons.DPadLeft))
                 {
-                    tankyBody.ApplyLinearImpulse(new Vector2(-horzSpeed, 0));
+                    tanky.GoBack();
                 }
             }
         }
@@ -121,8 +108,8 @@ namespace Tanky
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             spriteBatch.Begin();
-            spriteBatch.Draw(tanky.Texture, ConvertUnits.ToDisplayUnits(tankyBody.Position), null, Color.White, 0, tankyOrigin, 1f, SpriteEffects.None, 0f);
-            spriteBatch.Draw(groundSprite, ConvertUnits.ToDisplayUnits(groundBody.Position), null, Color.White, 0f, groundOrigin, 1f, SpriteEffects.None, 0f);
+            spriteBatch.Draw(tanky.Sprite, ConvertUnits.ToDisplayUnits(tanky.Position), null, Color.White, 0, tanky.Origin, 1f, SpriteEffects.None, 0f);
+            spriteBatch.Draw(platform.Sprite, ConvertUnits.ToDisplayUnits(platform.Position), null, Color.White, 0f, platform.Origin, 1f, SpriteEffects.None, 0f);
             spriteBatch.End();
 
             base.Draw(gameTime);
