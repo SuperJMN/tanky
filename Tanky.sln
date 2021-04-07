@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tanky", "Tanky\Tanky.csproj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tanky.Desktop", "Tanky.Desktop\Tanky.Desktop.csproj", "{2340E8FC-D524-4F73-B1F8-B07E508B2194}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tanky.Android", "Project1\Tanky.Android.csproj", "{73CD5410-0564-4ECF-9632-24AA5BF82CE5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tanky.Android", "Tanky.Android\Tanky.Android.csproj", "{73CD5410-0564-4ECF-9632-24AA5BF82CE5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
