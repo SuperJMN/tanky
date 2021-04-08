@@ -44,7 +44,7 @@ namespace Tanky
             var width = ConvertUnits.ToSimUnits(512f);
             var height = ConvertUnits.ToSimUnits(64f);
             
-            tanky = new Tanky(Content.Load<Texture2D>("TankyBody"), Content.Load<Texture2D>("TankyCannon"), world);
+            tanky = new Tanky(Content, Content.Load<Texture2D>("TankyBody"), new Vector2(4, 0), world);
 
             platform = new Platform(Content.Load<Texture2D>("GroundSprite"), world, groundPosition, width, height);
         }

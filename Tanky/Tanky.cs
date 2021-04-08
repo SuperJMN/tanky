@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using VelcroPhysics.Dynamics;
 using VelcroPhysics.Factories;
@@ -11,7 +12,6 @@ namespace Tanky
     {
         private readonly Texture2D sprite;
         private readonly Texture2D cannonSprite;
-        private readonly World world;
         private readonly Body tankyBody;
         private readonly Vector2 origin;
         private readonly float horzSpeed = 0.02f;
@@ -20,15 +20,16 @@ namespace Tanky
         private float cannonRotation;
         private float cannonRotationSpeed = 0.01f;
 
-        public Tanky(Texture2D sprite, Texture2D cannonSprite, World world)
+        public Tanky(ContentManager contentManager, World world, Vector2 initialPosition)
         {
-            this.sprite = sprite;
-            this.cannonSprite = cannonSprite;
-            this.world = world;
+            sprite = contentManager.Load<Texture2D>("TankyBody");
+            cannonSprite = contentManager.Load<Texture2D>("TankyCannon");
+
             origin = new Vector2(sprite.Width / 2f, sprite.Height / 2f);
             var width = ConvertUnits.ToSimUnits(sprite.Width);
             var height = ConvertUnits.ToSimUnits(sprite.Width);
-            tankyBody = BodyFactory.CreateRectangle(world, width, height, 1, new Vector2(4, 0), bodyType: BodyType.Dynamic);
+            tankyBody = BodyFactory.CreateRectangle(world, width, height, 1, initialPosition, bodyType: BodyType.Dynamic);
+
             tankyBody.OnCollision += (a, b, contact) =>
             {
                 if (Math.Abs(Math.Abs(contact.Manifold.LocalNormal.Y) - 1) < 0.02)
