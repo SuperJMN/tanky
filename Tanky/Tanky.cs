@@ -19,6 +19,7 @@ namespace Tanky
         private bool isTouchingGround;
         private float cannonRotation;
         private float cannonRotationSpeed = 0.01f;
+        private Vector2 velocity;
 
         public Tanky(ContentManager contentManager, World world, Vector2 initialPosition)
         {
