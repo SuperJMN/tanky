@@ -15,7 +15,8 @@ namespace Tanky
         private Tanky tanky;
         private readonly World world = new World(new Vector2(0, 9.82f));
         private Vector2 _cameraPosition;
-        private readonly Node stage = new Node();
+        private readonly Node stage;
+        private KeyboardState previous;
 
         public Game1()
         {
@@ -24,6 +25,7 @@ namespace Tanky
             
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
+            stage = new Stage(world);
         }
 
         protected override void Initialize()
@@ -43,7 +45,7 @@ namespace Tanky
             Vector2 groundPosition = ConvertUnits.ToSimUnits(screenCenter) + new Vector2(-1, 1.25f);
 
           
-            tanky = new Tanky(Content, world,new Vector2(4, 0));
+            tanky = new Tanky(Content);
             stage.AddChild(tanky);
             
             var platform = new Platform(Content.Load<Texture2D>("GroundSprite"), world, groundPosition);
@@ -95,6 +97,13 @@ namespace Tanky
             {
                 tanky.Jump();
             }
+
+            if (previous.IsKeyUp(Keys.Enter) && keyboardState.IsKeyDown(Keys.Enter))
+            {
+                tanky.Shot();
+            }
+
+            previous = keyboardState;
         }
 
         private void HandleKeypad(float dt)

@@ -13,40 +13,34 @@ namespace Tanky
 {
     public class Tanky : Node
     {
+        private readonly ContentManager contentManager;
         private readonly Texture2D sprite;
         private readonly Texture2D cannonSprite;
-        private readonly Body tankyBody;
-        private readonly Vector2 rotationCenter;
+        private Body tankyBody;
         private readonly float walkImpulse = 1.2f;
         private readonly float jumpImpulse = 0.2f;
-        private bool isTouchingGround;
         private float cannonRotation;
         private float cannonRotationSpeed = 0.4f;
+        private float width;
+        private float height;
+        private Vector2 rotationCenter;
 
-        public Tanky(ContentManager contentManager, World world, Vector2 initialPosition)
+        public Tanky(ContentManager contentManager)
         {
+            this.contentManager = contentManager;
             sprite = contentManager.Load<Texture2D>("TankyBody");
             cannonSprite = contentManager.Load<Texture2D>("TankyCannon");
+        }
 
+        protected override void OnAttach(Node node)
+        {
+            var initialPosition = new Vector2(4, 0);
             rotationCenter = new Vector2(sprite.Width / 2f, sprite.Height / 2f);
-            var width = ConvertUnits.ToSimUnits(sprite.Width);
-            var height = ConvertUnits.ToSimUnits(sprite.Width);
-            tankyBody = BodyFactory.CreateRectangle(world, width, height, 1, initialPosition, bodyType: BodyType.Dynamic);
-            tankyBody.LocalCenter = new Vector2(0, height/2);
+            width = ConvertUnits.ToSimUnits(sprite.Width);
+            height = ConvertUnits.ToSimUnits(sprite.Width);
 
-            tankyBody.OnCollision += (a, b, contact) =>
-            {
-                isTouchingGround = true;
-            };
-
-            tankyBody.OnSeparation += (a, b, contact) =>
-            {
-                var cos = Math.Sin(contact.Manifold.LocalNormal.Y);
-                if (Math.Abs(cos - 1) < 0.1)
-                {
-                    isTouchingGround = false;
-                }
-            };
+            tankyBody = BodyFactory.CreateRectangle(World, width, height, 1, initialPosition, bodyType: BodyType.Dynamic);
+            tankyBody.LocalCenter = new Vector2(0, height / 2);
         }
 
         protected override void DrawMe(SpriteBatch spriteBatch)
@@ -72,10 +66,10 @@ namespace Tanky
 
             var impulse = walkImpulse * dt;
 
-            if (!isTouchingGround)
-            {
-                impulse /= 3;
-            }
+            //if (!isTouchingGround)
+            //{
+            //    impulse /= 3;
+            //}
 
             tankyBody.ApplyLinearImpulse(new Vector2(impulse * multiplier, 0));
         }
@@ -111,6 +105,11 @@ namespace Tanky
             {
                 cannonRotation = newValue;
             }
+        }
+
+        public void Shot()
+        {
+            Parent.AddChild(new Bullet(contentManager, this.tankyBody.Position, new Vector2(0.2f, 0)));
         }
     }
 }

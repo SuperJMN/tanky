@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework.Graphics;
+using VelcroPhysics.Dynamics;
 
 namespace Tanky
 {
@@ -28,6 +29,22 @@ namespace Tanky
         public void AddChild(Node child)
         {
             children.Add(child);
+            child.Attach(this);
         }
+
+        private void Attach(Node parent)
+        {
+            Parent = parent;
+            World = parent.World;
+            OnAttach(parent);
+        }
+
+        protected virtual void OnAttach(Node node)
+        {
+        }
+
+        public World World { get; set; }
+
+        public Node Parent { get; set; }
     }
 }
