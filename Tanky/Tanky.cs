@@ -8,7 +8,7 @@ using VelcroPhysics.Utilities;
 
 namespace Tanky
 {
-    class Tanky
+    class Tanky: Node
     {
         private readonly Texture2D sprite;
         private readonly Texture2D cannonSprite;
@@ -45,7 +45,7 @@ namespace Tanky
             };
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        protected override void DrawMe(SpriteBatch spriteBatch)
         {
             var tankySpritePos = ConvertUnits.ToDisplayUnits(tankyBody.Position);
             var cannonPos = new Vector2(tankySpritePos.X + 7, tankySpritePos.Y + 2);

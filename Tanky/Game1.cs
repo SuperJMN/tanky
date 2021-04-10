@@ -14,12 +14,12 @@ namespace Tanky
         private Tanky tanky;
         private readonly World world = new World(new Vector2(0, 9.82f));
         private Vector2 _cameraPosition;
-        private Platform platform;
+        private readonly Node stage = new Node();
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
-            graphics.IsFullScreen = true;
+            //graphics.IsFullScreen = true;
             
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
@@ -45,8 +45,10 @@ namespace Tanky
             var height = ConvertUnits.ToSimUnits(64f);
             
             tanky = new Tanky(Content, world,new Vector2(4, 0));
-
-            platform = new Platform(Content.Load<Texture2D>("GroundSprite"), world, groundPosition, width, height);
+            stage.AddChild(tanky);
+            
+            var platform = new Platform(Content.Load<Texture2D>("GroundSprite"), world, groundPosition, width, height);
+            stage.AddChild(platform);
         }
 
         protected override void Update(GameTime gameTime)
@@ -130,8 +132,8 @@ namespace Tanky
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             spriteBatch.Begin();
-            tanky.Draw(spriteBatch);
-            spriteBatch.Draw(platform.Sprite, ConvertUnits.ToDisplayUnits(platform.Position), null, Color.White, 0f, platform.Origin, 1f, SpriteEffects.None, 0f);
+            stage.Draw(spriteBatch);
+            
             spriteBatch.End();
 
             base.Draw(gameTime);
