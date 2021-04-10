@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using VelcroPhysics.Dynamics;
@@ -41,13 +42,11 @@ namespace Tanky
             var screenCenter = new Vector2(graphics.GraphicsDevice.Viewport.Width / 2f, graphics.GraphicsDevice.Viewport.Height / 2f);
             Vector2 groundPosition = ConvertUnits.ToSimUnits(screenCenter) + new Vector2(0, 1.25f);
 
-            var width = ConvertUnits.ToSimUnits(512f);
-            var height = ConvertUnits.ToSimUnits(64f);
-            
+          
             tanky = new Tanky(Content, world,new Vector2(4, 0));
             stage.AddChild(tanky);
             
-            var platform = new Platform(Content.Load<Texture2D>("GroundSprite"), world, groundPosition, width, height);
+            var platform = new Platform(Content.Load<Texture2D>("GroundSprite"), world, groundPosition);
             stage.AddChild(platform);
         }
 
@@ -56,36 +55,37 @@ namespace Tanky
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            HandleKeypad();
-            HandleKeyboard();
+            var dt = gameTime.GetDt();
+            HandleKeypad(dt);
+            HandleKeyboard(dt);
            
-            world.Step((float)gameTime.ElapsedGameTime.TotalMilliseconds * 0.001F);
+            world.Step((float) gameTime.ElapsedGameTime.TotalSeconds);
 
             base.Update(gameTime);
         }
 
-        private void HandleKeyboard()
+        private void HandleKeyboard(float dt)
         {
             var keyboardState = Keyboard.GetState();
 
             if (keyboardState.IsKeyDown(Keys.A))
             {
-                tanky.GoBack();
+                tanky.GoBack(dt);
             }
 
             if (keyboardState.IsKeyDown(Keys.Up))
             {
-                tanky.RiseCannon();
+                tanky.RiseCannon(dt);
             }
 
             if (keyboardState.IsKeyDown(Keys.Down))
             {
-                tanky.LowerCannon();
+                tanky.LowerCannon(dt);
             }
 
             if (keyboardState.IsKeyDown(Keys.D))
             {
-                tanky.GoForward();
+                tanky.GoForward(dt);
             }
 
             if (keyboardState.IsKeyDown(Keys.Space))
@@ -94,7 +94,7 @@ namespace Tanky
             }
         }
 
-        private void HandleKeypad()
+        private void HandleKeypad(float dt)
         {
             GamePadState padState = GamePad.GetState(0);
 
@@ -107,22 +107,22 @@ namespace Tanky
 
                 if (padState.IsButtonDown(Buttons.X))
                 {
-                    tanky.RiseCannon();
+                    tanky.RiseCannon(dt);
                 }
 
                 if (padState.IsButtonDown(Buttons.Y))
                 {
-                    tanky.LowerCannon();
+                    tanky.LowerCannon(dt);
                 }
 
                 if (padState.IsButtonDown(Buttons.DPadRight))
                 {
-                    tanky.GoForward();
+                    tanky.GoForward(dt);
                 }
 
                 if (padState.IsButtonDown(Buttons.DPadLeft))
                 {
-                    tanky.GoBack();
+                    tanky.GoBack(dt);
                 }
             }
         }
@@ -137,6 +137,14 @@ namespace Tanky
             spriteBatch.End();
 
             base.Draw(gameTime);
+        }
+    }
+
+    public static class TimeSpanMixin
+    {
+        public static float GetDt(this GameTime gt)
+        {
+            return (float) gt.ElapsedGameTime.TotalSeconds;
         }
     }
 }

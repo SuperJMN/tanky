@@ -12,9 +12,12 @@ namespace Tanky
         private readonly Vector2 origin;
         private readonly Body groundBody;
 
-        public Platform(Texture2D sprite, World world, Vector2 position, float width, float height)
+        public Platform(Texture2D sprite, World world, Vector2 position)
         {
             this.sprite = sprite;
+            var width = ConvertUnits.ToSimUnits(sprite.Width);
+            var height = ConvertUnits.ToSimUnits(sprite.Height);
+
             groundBody = BodyFactory.CreateRectangle(world, width, height, 1f, position);
             groundBody.BodyType = BodyType.Static;
             groundBody.Restitution = 0.3f;
