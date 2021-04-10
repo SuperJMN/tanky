@@ -17,18 +17,18 @@ namespace Tanky.Android
     )]
     public class Activity1 : AndroidGameActivity
     {
-        private Game1 _game;
-        private View _view;
+        private Game1 game;
+        private View view;
 
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
 
-            _game = new Game1();
-            _view = _game.Services.GetService(typeof(View)) as View;
+            game = new Game1();
+            view = game.Services.GetService(typeof(View)) as View;
 
-            SetContentView(_view);
-            _game.Run();
+            SetContentView(view);
+            game.Run();
         }
     }
 }

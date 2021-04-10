@@ -40,7 +40,7 @@ namespace Tanky
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             var screenCenter = new Vector2(graphics.GraphicsDevice.Viewport.Width / 2f, graphics.GraphicsDevice.Viewport.Height / 2f);
-            Vector2 groundPosition = ConvertUnits.ToSimUnits(screenCenter) + new Vector2(0, 1.25f);
+            Vector2 groundPosition = ConvertUnits.ToSimUnits(screenCenter) + new Vector2(-1, 1.25f);
 
           
             tanky = new Tanky(Content, world,new Vector2(4, 0));
@@ -48,6 +48,9 @@ namespace Tanky
             
             var platform = new Platform(Content.Load<Texture2D>("GroundSprite"), world, groundPosition);
             stage.AddChild(platform);
+
+            var platform2 = new Platform(Content.Load<Texture2D>("GroundSprite"), world, ConvertUnits.ToSimUnits(screenCenter)+ new Vector2(3, 1.50f));
+            stage.AddChild(platform2);
         }
 
         protected override void Update(GameTime gameTime)

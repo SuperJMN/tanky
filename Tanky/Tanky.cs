@@ -1,21 +1,24 @@
 ﻿using System;
+using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using VelcroPhysics.Collision.ContactSystem;
+using VelcroPhysics.Collision.Filtering;
 using VelcroPhysics.Dynamics;
 using VelcroPhysics.Factories;
 using VelcroPhysics.Utilities;
 
 namespace Tanky
 {
-    class Tanky : Node
+    public class Tanky : Node
     {
         private readonly Texture2D sprite;
         private readonly Texture2D cannonSprite;
         private readonly Body tankyBody;
         private readonly Vector2 rotationCenter;
         private readonly float walkImpulse = 1.2f;
-        private readonly float jumpImpulse = 0.5f;
+        private readonly float jumpImpulse = 0.2f;
         private bool isTouchingGround;
         private float cannonRotation;
         private float cannonRotationSpeed = 0.4f;
@@ -29,6 +32,7 @@ namespace Tanky
             var width = ConvertUnits.ToSimUnits(sprite.Width);
             var height = ConvertUnits.ToSimUnits(sprite.Width);
             tankyBody = BodyFactory.CreateRectangle(world, width, height, 1, initialPosition, bodyType: BodyType.Dynamic);
+            tankyBody.LocalCenter = new Vector2(0, height/2);
 
             tankyBody.OnCollision += (a, b, contact) =>
             {
@@ -37,7 +41,11 @@ namespace Tanky
 
             tankyBody.OnSeparation += (a, b, contact) =>
             {
-                isTouchingGround = false;
+                var cos = Math.Sin(contact.Manifold.LocalNormal.Y);
+                if (Math.Abs(cos - 1) < 0.1)
+                {
+                    isTouchingGround = false;
+                }
             };
         }
 
@@ -47,7 +55,7 @@ namespace Tanky
             var cannonPos = new Vector2(tankySpritePos.X + 7, tankySpritePos.Y + 2);
             var cannonCenter = new Vector2(0, cannonSprite.Height);
             spriteBatch.Draw(cannonSprite, cannonPos, null, Color.White, cannonRotation, cannonCenter, 1f, SpriteEffects.None, 0f);
-            spriteBatch.Draw(sprite, tankySpritePos, null, Color.White, 0, rotationCenter, 1f, SpriteEffects.None, 0f);
+            spriteBatch.Draw(sprite, tankySpritePos, null, Color.White, tankyBody.Rotation, rotationCenter, 1f, SpriteEffects.None, 0f);
         }
 
         public void GoForward(float dt)
@@ -79,7 +87,7 @@ namespace Tanky
 
         public void Jump()
         {
-            if (isTouchingGround)
+            if (tankyBody.ContactList != null)
             {
                 tankyBody.ApplyLinearImpulse(new Vector2(0, -jumpImpulse));
             }
